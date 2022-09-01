@@ -3,11 +3,13 @@ import { useQuery } from '@apollo/client'
 import { withTranslation } from 'react-i18next'
 import { withRouter } from "react-router"
 import moment from 'moment'
+import { Link } from 'react-router-dom'
 
 import {
   Alert,
   Dimmer,
   Grid,
+  Button
 } from "tabler-react";
 
 import { TimeStringToJSDateOBJ } from '../../../../tools/date_tools'
@@ -19,6 +21,8 @@ import ShopClassBookClasspasses from './ShopClassBookClasspasses'
 import ShopClassBookSubscriptions from "./ShopClassBookSubscriptions"
 import ShopClassBookPriceDropin from "./ShopClassBookPriceDropin"
 import ShopClassBookPriceTrial from "./ShopClassBookPriceTrial"
+
+import ShopClassBookTitle from './ShopClassBookTitle'
 
 import { GET_BOOKING_OPTIONS_QUERY } from "./queries"
 
@@ -57,7 +61,7 @@ function ShopClassBook({ t, match, history }) {
     )
   }
   
-  console.log(data)
+  console.log('The Data: ', data)
   const scheduleClass = data.scheduleClass
 
   const alreadyBooked = data.scheduleClassBookingOptions.alreadyBooked
@@ -71,7 +75,7 @@ function ShopClassBook({ t, match, history }) {
   const classType = scheduleItem.organizationClasstype.name
   const timeStart = moment(TimeStringToJSDateOBJ(scheduleItem.timeStart)).format(timeFormat) 
   const timeEnd = moment(TimeStringToJSDateOBJ(scheduleItem.timeEnd)).format(timeFormat) 
-  const date_display = moment(class_date).format(dateFormat)
+//   const date_display = moment(class_date).format(dateFormat)
   // const subtitle = class_subtitle({
   //   t: t,
   //   location: , 
@@ -80,7 +84,7 @@ function ShopClassBook({ t, match, history }) {
   //   timeStart: , 
   //   date: class_date
   // })
-  const class_info = date_display + ' ' + timeStart + ' - ' + timeEnd + ' ' + classType + ' ' + t("general.at") + ' ' + location
+//   const class_info = date_display + ' ' + timeStart + ' - ' + timeEnd + ' ' + classType + ' ' + t("general.at") + ' ' + location
 
   console.log(prices)
   console.log("ALREADY BOOKED")
@@ -128,9 +132,23 @@ function ShopClassBook({ t, match, history }) {
         </Alert>
       break
     case "OK":
-      content = <Grid.Row cards deck>
+      content = <Grid.Row cards deck>		
+
+		{ classpasses.length === 0 && 
+		<Alert type="primary" hasExtraSpace>
+			<h5>No classpasses available</h5>
+			<p>It seems that you do not have any active class passes.</p>
+			<Link to={'/shop/classpasses'}>
+      			<Button color="primary" icon={'play'}>
+          			Get your class pass
+      			</Button>
+    		</Link>			
+		</Alert>
+		}
+
         <ShopClassBookSubscriptions subscriptions={subscriptions} />
         <ShopClassBookClasspasses classpasses={classpasses} />
+				
         {(prices) ?
           (prices.organizationClasspassDropin) ? 
             <ShopClassBookPriceDropin priceDropin={prices.organizationClasspassDropin}/> : "" 
@@ -149,7 +167,17 @@ function ShopClassBook({ t, match, history }) {
     <ShopClassBookBase pageHeaderOptions={<ShopClassBookBack />}>
       <Grid.Row>
         <Grid.Col md={12}>
-          <h5>{ class_info }</h5>
+          {/* <h5>{ class_info }</h5> */}
+		  
+		  <ShopClassBookTitle 
+		  	t={t}
+		  	class_date={class_date}
+			timeStart={timeStart}
+			timeEnd={timeEnd}
+			classType={classType}
+			location={location}
+			/>
+
           <div className="mt-6">
             {(alreadyBooked) ?
               <Alert type="primary" hasExtraSpace>
