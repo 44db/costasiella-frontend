@@ -19,7 +19,7 @@ import { TOKEN_REFRESH } from "./queries/system/auth"
 
 // Import moment locale
 // import moment from 'moment'
-import 'moment/locale/nl'
+import 'moment/locale/en-gb'
 
 import CSStandalonePageLoader from './components/ui/CSStandalonePageLoader'
 
